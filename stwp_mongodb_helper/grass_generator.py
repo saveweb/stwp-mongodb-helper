@@ -18,6 +18,7 @@ def arg_parser():
     parser.add_argument("db", help="Database name")
     parser.add_argument("co", help="Collection name")
     parser.add_argument("--chunk-size", help="Chunk size", type=int, required=True)
+    parser.add_argument("--end", help="End ID", type=int, required=True)
     parser.add_argument("--delay", help="Delay in seconds", type=float, required=False, default=1.0)
     return parser.parse_args()
 
@@ -52,6 +53,9 @@ def main():
         if todos_now > chunk_size * 5:
             continue
         max_id = find_max_id(coll, "id")  or 0
+        if max_id >= args.end:
+            print("Max id reached", max_id)
+            break
         print("Max id:", max_id)
         docs = []
         for i in range(1,chunk_size+1):
