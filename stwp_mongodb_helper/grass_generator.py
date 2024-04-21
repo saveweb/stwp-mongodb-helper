@@ -48,7 +48,7 @@ def main():
 
     input("Press Enter to start generating documents")
 
-    tqd = tqdm.tqdm(total=args.end)
+    tqd = None
 
     for _ in qos(delay):
         todos_now = coll.count_documents({ "status": "TODO" })
@@ -56,7 +56,8 @@ def main():
         if todos_now > chunk_size * 5:
             continue
         max_id_now = find_max_id(coll, "id")  or 0
-
+        if tqd is None:
+            tqd = tqdm.tqdm(total=args.end, initial=max_id_now)
         tqd.n = max_id_now
         tqd.refresh()
 
