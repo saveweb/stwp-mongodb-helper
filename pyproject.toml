@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stwp-mongodb-helper"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["saveweb <saveweb@saveweb.org>"]
 readme = "README.md"
@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 pymongo = "^4.6.3"
+tqdm = "^4.66.2"
 
 [tool.poetry.scripts]
 grass_generator = "stwp_mongodb_helper.grass_generator:main"

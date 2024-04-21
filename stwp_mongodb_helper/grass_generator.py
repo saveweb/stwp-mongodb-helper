@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 
+import tqdm
 import pymongo
 import pymongo.collection
 
@@ -47,20 +48,26 @@ def main():
 
     input("Press Enter to start generating documents")
 
+    tqd = tqdm.tqdm(total=args.end)
+
     for _ in qos(delay):
         todos_now = coll.count_documents({ "status": "TODO" })
         print(todos_now, "TODO documents in queue")
         if todos_now > chunk_size * 5:
             continue
-        max_id = find_max_id(coll, "id")  or 0
-        if max_id >= args.end:
-            print("Max id reached", max_id)
+        max_id_now = find_max_id(coll, "id")  or 0
+
+        tqd.n = max_id_now
+        tqd.refresh()
+
+        if max_id_now >= args.end:
+            print("Max id reached", max_id_now)
             break
-        print("Max id:", max_id)
+        print("Max id:", max_id_now)
         docs = []
         for i in range(1,chunk_size+1):
             docs.append({
-                "id": max_id + i,
+                "id": max_id_now + i,
                 "status": "TODO"
             })
         print("Inserting", chunk_size, "documents")
