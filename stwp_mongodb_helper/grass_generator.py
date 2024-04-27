@@ -15,7 +15,7 @@ def find_max_id(c: pymongo.collection.Collection, key: str):
 
 
 def arg_parser():
-    parser = argparse.ArgumentParser(description="Query MongoDB")
+    parser = argparse.ArgumentParser(description="")
     parser.add_argument("db", help="Database name")
     parser.add_argument("co", help="Collection name")
     parser.add_argument("--chunk-size", help="Chunk size", type=int, required=True)
