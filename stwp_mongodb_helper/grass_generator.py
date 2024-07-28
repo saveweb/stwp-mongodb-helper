@@ -21,6 +21,7 @@ def arg_parser():
     parser.add_argument("--chunk-size", help="Chunk size", type=int, required=True)
     parser.add_argument("--end", help="End ID", type=int, required=True)
     parser.add_argument("--delay", help="Delay in seconds", type=float, required=False, default=1.0)
+    parser.add_argument("--id-name", help="ID name", default="id", choices=["id", "feed_id"])
     return parser.parse_args()
 
 def qos(delay: float):
@@ -34,6 +35,7 @@ def main():
     c_queue_name = args.co
     chunk_size: int = args.chunk_size
     delay: float = args.delay
+    ID_NAME = args.id_name
 
     client = pymongo.MongoClient(os.environ['MONGODB_URI'])
     dbs = client.list_database_names()
@@ -55,7 +57,7 @@ def main():
         print(todos_now, "TODO documents in queue")
         if todos_now > chunk_size * 5:
             continue
-        max_id_now = find_max_id(coll, "id")  or 0
+        max_id_now = find_max_id(coll, ID_NAME)  or 0
         if tqd is None:
             tqd = tqdm.tqdm(total=args.end, initial=max_id_now)
         tqd.n = max_id_now
@@ -68,11 +70,11 @@ def main():
         docs = []
         for i in range(1,chunk_size+1):
             docs.append({
-                "id": max_id_now + i,
+                ID_NAME: max_id_now + i,
                 "status": "TODO"
             })
         print("Inserting", chunk_size, "documents")
-        print([doc["id"] for doc in docs])
+        print([doc[ID_NAME] for doc in docs])
         coll.insert_many(docs)
 
 
