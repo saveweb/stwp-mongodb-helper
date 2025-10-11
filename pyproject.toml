@@ -17,5 +17,25 @@ grass_requeue = "stwp_mongodb_helper.grass_requeue:main"
 grass_dedup = "stwp_mongodb_helper.grass_dedup:main"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "uv_build"
+requires = [ "uv-build" ]
+
+[project]
+authors = [
+    {name = "saveweb", email = "saveweb@saveweb.org"},
+]
+requires-python = "<4.0,>=3.8"
+dependencies = [
+    "pymongo<5.0.0,>=4.6.3",
+    "tqdm<5.0.0,>=4.66.2",
+    "motor<4.0.0,>=3.4.0",
+]
+name = "stwp-mongodb-helper"
+version = "0.1.4"
+description = ""
+readme = "README.md"
+
+[project.scripts]
+grass_generator = "stwp_mongodb_helper.grass_generator:main"
+grass_requeue = "stwp_mongodb_helper.grass_requeue:main"
+grass_dedup = "stwp_mongodb_helper.grass_dedup:main"

@@ -8,7 +8,6 @@ import os
 from tqdm import tqdm
 from datetime import UTC, datetime, timedelta
 
-STATUS_FAIL = "FAIL"
 DRY_RUN = False
 
 def arg_parser():
@@ -18,6 +17,7 @@ def arg_parser():
     parser.add_argument("--queue-co", help="")
     parser.add_argument("--hours", help="Hours", type=float, default=1.0)
     parser.add_argument("--id_name", help="id name", default="id")
+    parser.add_argument("--status-to-scan", help="Status to scan", default="FAIL", choices=["FAIL", "PROCESSING"])
     return parser.parse_args()
 
 async def worker(jobs: Queue):
@@ -33,6 +33,7 @@ async def _main():
     queue_co_name = args.queue_co
     hours: float = args.hours
     id_name = args.id_name
+    STATUS_TO_SCAN = args.status_to_scan
 
     client = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGODB_URI"])
     dbs = await client.list_database_names()
@@ -46,18 +47,18 @@ async def _main():
     items_co = db[items_co_name]
     queue_co = db[queue_co_name]
 
-    jobs = Queue(maxsize=100)
+    jobs = Queue(maxsize=1000)
 
-    for _ in range(100):
+    for _ in range(800):
         asyncio.create_task(worker(jobs))
 
     _filter = {
-        "status": STATUS_FAIL,
+        "status": STATUS_TO_SCAN,
         "updated_at": {"$lt": datetime.now(tz=UTC) - timedelta(hours=hours)},
     }  # 一定要设置 tz=UTC ！！！！
     jobs_total = await queue_co.count_documents(_filter)
     global tqd
-    tqd = tqdm(total=jobs_total)
+    tqd = tqdm(total=jobs_total, desc="Processing", unit="task", position=0, leave=False)
 
     async for fail_task in queue_co.find(_filter):
         async def process(fail_task):

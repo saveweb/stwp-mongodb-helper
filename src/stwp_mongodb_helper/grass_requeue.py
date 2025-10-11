@@ -16,7 +16,7 @@ def arg_parser():
     parser.add_argument("db", help="Database name")
     parser.add_argument("co", help="Collection name")
     parser.add_argument("--hours", help="Hours", type=float, default=1.0)
-    parser.add_argument("--status-from", help="From status", default="FAIL")
+    parser.add_argument("--status-from", help="From status", choices=["PROCESSING", "FAIL"], default="FAIL")
     return parser.parse_args()
 
 async def worker(jobs: Queue):
@@ -59,7 +59,7 @@ async def _main():
                 {"_id": doc["_id"]},
                 {"$set": {"status": STATUS_TO}},
             )
-            # print(doc)
+            print(doc)
         job = process(doc)
         await jobs.put(job)
 
