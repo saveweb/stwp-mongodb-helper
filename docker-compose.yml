@@ -1,0 +1,9 @@
+services:
+  stwp-task-generator:
+    build: .
+    volumes:
+      - ./:/app/
+      - /app/.venv
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - DAEMON_MODE=yes

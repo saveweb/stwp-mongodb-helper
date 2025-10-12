@@ -8,7 +8,6 @@ import os
 from datetime import UTC, datetime, timedelta
 
 
-# STATUS_FROM = "PROCESSING"
 STATUS_TO = "TODO"
 
 def arg_parser():

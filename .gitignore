@@ -1,2 +1,3 @@
 .vscode
 __pycache__
+generator_tasks.toml
