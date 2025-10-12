@@ -1,6 +1,7 @@
 services:
   stwp-task-generator:
     build: .
+    restart: always
     volumes:
       - ./:/app/
       - /app/.venv
