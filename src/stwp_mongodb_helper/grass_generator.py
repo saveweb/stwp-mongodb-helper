@@ -55,7 +55,7 @@ class Args:
 class GID(str): ...
 
 def claim_owner(client: pymongo.MongoClient, session_id: GID, db: str, co: str):
-    meta_col = client['tacker']['generator_registry']
+    meta_col = client['tracker']['generator_registry']
     meta_col.update_one(
         {"_id": f"{db}.{co}"},
         {
@@ -68,7 +68,7 @@ def claim_owner(client: pymongo.MongoClient, session_id: GID, db: str, co: str):
     )
 
 def check_owner(client: pymongo.MongoClient, gid: GID, a: Args, session: ClientSession):
-    meta_col = client['tacker']['generator_registry']
+    meta_col = client['tracker']['generator_registry']
     r = meta_col.find_one({"_id": f"{a.db}.{a.co}"}, session=session)
     assert r is not None, "Generator not registered"
     assert r["owner"] == gid, "Lost ownership of the generator"
